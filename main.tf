@@ -31,7 +31,7 @@ resource "aws_cloudwatch_event_rule" "scaling_event_rule" {
   event_pattern = jsonencode({
     source      = ["aws.autoscaling"]
     detail-type = ["EC2 Instance Launch Successful", "EC2 Instance Terminate Successful", "EC2 Instance Launch Unsuccessful", "EC2 Instance Terminate Unsuccessful", "EC2 Instance-launch Lifecycle Action", "EC2 Instance-terminate Lifecycle Action"]
-    detail      = {
+    detail = {
       AutoScalingGroupName = [{ prefix = var.asg_name_prefix }]
     }
   })
@@ -64,7 +64,7 @@ resource "aws_lambda_permission" "eventBridge" {
 }
 
 resource "aws_iam_role" "lambda" {
-  name               = "${var.name}-lambda-role"
+  name = "${var.name}-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -79,7 +79,7 @@ resource "aws_iam_role_policy" "lambda" {
   name = "${var.name}-lambda-role-policy"
   role = aws_iam_role.lambda.id
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Action   = ["ec2:Describe*", "ec2:*Tags"]
