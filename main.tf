@@ -26,11 +26,11 @@ resource "random_uuid" "lambda_src_hash" {
 }
 
 resource "aws_cloudwatch_event_rule" "scaling_event_rule" {
-  name        = "scaling_event_rule"
-  description = "Rule for scaling event in elastic beanstalk"
+  name        = "${var.name}-scaling-event-rule"
+  description = "Rule for scaling event in elastic beanstalk autoscaling group ${var.asg_name_prefix}"
   event_pattern = jsonencode({
     source      = ["aws.autoscaling"]
-    detail_type = ["EC2 Instance Launch Successful", "EC2 Instance Terminate Successful", "EC2 Instance Launch Unsuccessful", "EC2 Instance Terminate Unsuccessful", "EC2 Instance-launch Lifecycle Action", "EC2 Instance-terminate Lifecycle Action"]
+    detail-type = ["EC2 Instance Launch Successful", "EC2 Instance Terminate Successful", "EC2 Instance Launch Unsuccessful", "EC2 Instance Terminate Unsuccessful", "EC2 Instance-launch Lifecycle Action", "EC2 Instance-terminate Lifecycle Action"]
     detail      = {
       AutoScalingGroupName = [{ prefix = var.asg_name_prefix }]
     }
@@ -51,7 +51,7 @@ resource "aws_lambda_function" "leader" {
 
 resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.scaling_event_rule.name
-  target_id = "SendToLambda"
+  target_id = "lambda_target"
   arn       = aws_lambda_function.leader.arn
 }
 
