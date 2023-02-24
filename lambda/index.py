@@ -8,9 +8,7 @@ autoscaling = boto3.client('autoscaling')
 ec2 = boto3.client('ec2')
 
 def lambda_handler(event, context):
-    print('Received event:')
-    print('eventbridge scaling event:')
-    print(event)
+    print(f"Received Scaling event: {event}")
 
     json = event['detail']
 
