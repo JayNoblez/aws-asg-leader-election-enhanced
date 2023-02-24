@@ -1,4 +1,4 @@
-import boto3
+import boto3, json
 
 valid_states = ['Pending', 'Pending:Wait', 'Pending:Proceed', 'InService']
 leader_tag_key = 'app:isLeader'
@@ -10,10 +10,10 @@ ec2 = boto3.client('ec2')
 def lambda_handler(event, context):
     print(f"Received Scaling event: {event}")
 
-    json = event['detail']
+    event_detail = event['detail']
 
     # list all instances currently in the autoscaling group
-    response = autoscaling.describe_auto_scaling_groups(AutoScalingGroupNames=[json['AutoScalingGroupName']])
+    response = autoscaling.describe_auto_scaling_groups(AutoScalingGroupNames=[event_detail['AutoScalingGroupName']])
     asg = response['AutoScalingGroups'].pop()
     candidates = []
     all_instance_ids = []
@@ -45,15 +45,15 @@ def lambda_handler(event, context):
     # if there's already a leader, don't change anything.
     if len(leaders) == 1:
         print(f"Retaining leader instance {leader_instance_ids[0]}")
-        return leaders[0]
+        return json.loads(json.dumps(leaders[0], default=str))
 
     # if there is more than one leader, keep one of them.
     elif len(leaders) > 1:
         new_leader = leader_instance_ids[0]
 
     # if there are no leaders and the triggering instance is coming online, make it the leader.
-    elif "Launching a new EC2 instance:" in json['Description']:
-        new_leader = json['EC2InstanceId']
+    elif "Launching a new EC2 instance:" in event_detail['Description']:
+        new_leader = event_detail['EC2InstanceId']
 
     # Otherwise, just pick a leader.
     else:
