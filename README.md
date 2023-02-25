@@ -58,7 +58,7 @@ aws cloudformation create-stack --stack-name elect-leader-asg --template-body fi
 4. This should setup the necessary resources in your AWS account.
 5. You can also upload the elect-leader-asg.yaml file to the CloudFormation console and deploy it from there.
 
-### Step 3: Verify the Deployment
+### Step 2: Verify the Deployment
 1. Once the deployment is complete, navigate to the AWS Management Console and check that the resources have been created.
 2. Monitor the leader selection process by checking the logs of the Lambda function.
 3. Verify that the selected leader instance is handling the expected tasks.
