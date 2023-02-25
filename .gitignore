@@ -3,4 +3,5 @@
 *.tfstate.backup
 .DS_Store
 .terraform.lock.hcl
-*.zip
+.terraform.tfstate.lock.info
+zipped_artifacts

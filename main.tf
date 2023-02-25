@@ -8,12 +8,13 @@ provider "aws" {
 
 locals {
   lambda_path = "${path.module}/lambda"
+  output_path = "${path.module}/zipped_artifacts/${random_uuid.lambda_src_hash.result}.zip"
 }
 
 data "archive_file" "packaged_lambda" {
   type        = "zip"
   source_dir  = local.lambda_path
-  output_path = "${path.module}/${random_uuid.lambda_src_hash.result}.zip"
+  output_path = local.output_path
 }
 
 resource "random_uuid" "lambda_src_hash" {
